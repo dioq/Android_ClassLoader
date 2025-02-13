@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Android_ClassLoader"
 include(":loader")
+include(":makedex")

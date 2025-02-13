@@ -13,8 +13,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 
-import dalvik.system.BaseDexClassLoader;
 import dalvik.system.DexClassLoader;
+import dalvik.system.BaseDexClassLoader;
 import dalvik.system.InMemoryDexClassLoader;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void load1(View view) {
         File dexOutputDir = this.getDir("dex", 0);// 无法直接从外部路径加载.dex文件，需要指定APP内部路径作为缓存目录（.dex文件会被解压到此目录）
-        Log.d(TAG, "dexOutputDir:" + dexOutputDir.toString());
+        Log.d(TAG, "dexOutputDir:" + dexOutputDir.getPath());
 
         File dexFile = new File(dir, "classes.dex");
         String libSearchPath = context.getFilesDir().getPath();
@@ -47,21 +47,7 @@ public class MainActivity extends AppCompatActivity {
         //4.父级类加载器，一般可以通过context.getClassLoader()获取到，也可以通过ClassLoader.getSystemClassLoader()取到。
 //        ClassLoader classLoader = new DexClassLoader(dexFile.getPath(), dexOutputDir.getAbsolutePath(), libSearchPath, getClassLoader());
         ClassLoader classLoader = new BaseDexClassLoader(dexFile.getPath(), dexOutputDir, libSearchPath, getClassLoader());
-
-        try {
-            // 获取类
-            Class<?> clz = classLoader.loadClass("cn.my.study.Test");
-
-            // 反射调用方法
-            Method method = clz.getMethod("getMsgFromDexFile", String.class);
-            Object result = method.invoke(clz.newInstance(), "TestMsg");
-            String msg = String.format("result:%s", result);
-            Log.d(TAG, msg);
-            showText.setText(msg);
-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
-                 InstantiationException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        invokeCustomMethod(classLoader);
     }
 
     public void load2(View view) {
@@ -74,7 +60,10 @@ public class MainActivity extends AppCompatActivity {
 
         //            classLoader = new InMemoryDexClassLoader(byteBuffers, null, context.getClassLoader());
         ClassLoader classLoader = new InMemoryDexClassLoader(byteBuffers, context.getClassLoader());
+        invokeCustomMethod(classLoader);
+    }
 
+    public void invokeCustomMethod(ClassLoader classLoader) {
         try {
             // 获取类
             Class<?> clz = classLoader.loadClass("cn.my.study.Test");
@@ -87,8 +76,7 @@ public class MainActivity extends AppCompatActivity {
             showText.setText(msg);
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
                  InstantiationException | InvocationTargetException e) {
-            e.printStackTrace();
+            Log.d(TAG, "Exception:" + e.getMessage());
         }
     }
-
 }
