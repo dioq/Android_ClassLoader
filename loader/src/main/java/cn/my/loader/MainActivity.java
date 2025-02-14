@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private final String dir = "/data/local/tmp";
 
 
-    private String dexPath = null;
+    private File dexFile = null;
     private File dexUnzipFile = null;
     private String soPath = null;
 
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         context = MainActivity.this;
         PermissionUtils.getInstance().requestPermissions(context);
 
-        dexPath = new File(dir, "classes.dex").getPath();
+        dexFile = new File(dir, "classes.dex");
         dexUnzipFile = context.getDir("dex", 0);
         soPath = context.getCacheDir().getPath();
         Log.d(TAG, "dexUnzipFile:" + dexUnzipFile.getPath());
@@ -51,27 +51,25 @@ public class MainActivity extends AppCompatActivity {
     public void load1(View view) {
         /*
             参数:
-            1.待加载的dex文件路径，如果是外存路径，一定要加上读外存文件的权限,
-            2.解压后的dex存放位置，此位置一定要是可读写且仅该应用可读写
-            3.指向包含本地库(so)的文件夹路径，可以设为null
-            4.父级类加载器，一般可以通过context.getClassLoader()获取到，也可以通过ClassLoader.getSystemClassLoader()取到。
-        * */
-        ClassLoader classLoader = new BaseDexClassLoader(dexPath, dexUnzipFile, soPath, ClassLoader.getSystemClassLoader());
-//        ClassLoader classLoader = new DexClassLoader(dexPath, dexUnzipFile.getAbsolutePath(), soPath, context.getClassLoader());
+            1.待加载的dex文件路径,如果是外存路径,一定要加上读外存文件的权限
+            2.解压后的dex存放位置,此位置一定要是可读写且仅该应用可读写
+            3.指向包含本地库(so)的文件夹路径,可以设为null
+            4.父级类加载器,一般可以通过context.getClassLoader()获取到,也可以通过ClassLoader.getSystemClassLoader()取到
+        **/
+        ClassLoader classLoader = new BaseDexClassLoader(dexFile.getPath(), dexUnzipFile, soPath, ClassLoader.getSystemClassLoader());
+//        ClassLoader classLoader = new DexClassLoader(dexFile.getPath(), dexUnzipFile.getPath(), soPath, context.getClassLoader());
         invokeCustomMethod(classLoader);
         tv.setText("从dex文件中加载类");
     }
 
     @SuppressLint("SetTextI18n")
     public void load2(View view) {
-        File dexFile = new File(dir, "classes.dex");
         byte[] bytes = FileUtils.getInstance().readFile(dexFile);
 
         ByteBuffer byteBuffers = ByteBuffer.allocate(bytes.length);
         byteBuffers.put(bytes);
         byteBuffers.position(0);
 
-        //            classLoader = new InMemoryDexClassLoader(byteBuffers, null, context.getClassLoader());
         ClassLoader classLoader = new InMemoryDexClassLoader(byteBuffers, ClassLoader.getSystemClassLoader());
         invokeCustomMethod(classLoader);
         tv.setText("从内存中加载类");
@@ -82,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         File apkFile = new File(dir, "makedex-debug.apk");
 
 //        ClassLoader classLoader = new BaseDexClassLoader(apkFile.getPath(), dexUnzipFile, soPath, ClassLoader.getSystemClassLoader());
-        ClassLoader classLoader = new DexClassLoader(apkFile.getPath(), dexUnzipFile.getAbsolutePath(), soPath, ClassLoader.getSystemClassLoader());
+        ClassLoader classLoader = new DexClassLoader(apkFile.getPath(), dexUnzipFile.getPath(), soPath, ClassLoader.getSystemClassLoader());
         invokeCustomMethod(classLoader);
         tv.setText("从apk文件中加载类");
     }
