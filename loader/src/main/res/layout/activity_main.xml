@@ -18,6 +18,12 @@
         android:onClick="load2"
         android:text="InMemoryDexClassLoader" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="load3"
+        android:text="load Class from apk" />
+
     <TextView
         android:id="@+id/textBloardId"
         android:layout_width="match_parent"

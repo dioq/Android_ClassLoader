@@ -63,6 +63,17 @@ public class MainActivity extends AppCompatActivity {
         invokeCustomMethod(classLoader);
     }
 
+    public void load3(View view) {
+        File dexOutputDir = this.getDir("dex", 0);// 无法直接从外部路径加载.dex文件，需要指定APP内部路径作为缓存目录（.dex文件会被解压到此目录）
+        Log.d(TAG, "dexOutputDir:" + dexOutputDir.getPath());
+
+        File dexFile = new File(dir, "makedex-debug.apk");
+        String libSearchPath = context.getFilesDir().getPath();
+
+        ClassLoader classLoader = new BaseDexClassLoader(dexFile.getPath(), dexOutputDir, libSearchPath, getClassLoader());
+        invokeCustomMethod2(classLoader);
+    }
+
     public void invokeCustomMethod(ClassLoader classLoader) {
         try {
             // 获取类
@@ -74,6 +85,20 @@ public class MainActivity extends AppCompatActivity {
             String msg = String.format("result:%s", result);
             Log.d(TAG, msg);
             showText.setText(msg);
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
+                 InstantiationException | InvocationTargetException e) {
+            Log.d(TAG, "Exception:" + e.getMessage());
+        }
+    }
+
+    public void invokeCustomMethod2(ClassLoader classLoader) {
+        try {
+            // 获取类
+            Class<?> clz = classLoader.loadClass("cn.my.dex.Start");
+
+            // 反射调用方法
+            Method method = clz.getMethod("start", Context.class);
+            method.invoke(clz.newInstance(), context);
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
                  InstantiationException | InvocationTargetException e) {
             Log.d(TAG, "Exception:" + e.getMessage());

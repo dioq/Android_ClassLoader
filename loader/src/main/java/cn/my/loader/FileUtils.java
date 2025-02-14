@@ -26,7 +26,6 @@ public class FileUtils {
     }
 
     public byte[] readFile(File file) {
-        String result = null;
         try {
             System.out.println(file.getAbsoluteFile());
             if (!file.exists()) {
@@ -78,7 +77,6 @@ public class FileUtils {
             return true;
         } catch (IOException e) {
             Log.d(TAG, "IOException:" + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }

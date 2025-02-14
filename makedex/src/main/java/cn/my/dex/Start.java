@@ -5,6 +5,7 @@ import android.util.Log;
 
 public class Start {
     private static final String TAG = "dlog";
+
     static {
         Log.d(TAG, "auto running");
     }
