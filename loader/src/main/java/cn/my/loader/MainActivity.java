@@ -1,5 +1,6 @@
 package cn.my.loader;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,7 +21,7 @@ import dalvik.system.InMemoryDexClassLoader;
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "dlog";
-    private TextView showText;
+    private TextView tv;
 
     private Context context = null;
     private final String dir = "/data/local/tmp";
@@ -30,11 +31,12 @@ public class MainActivity extends AppCompatActivity {
     private File dexUnzipFile = null;
     private String soPath = null;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        showText = findViewById(R.id.textBloardId);
+        tv = findViewById(R.id.textViewId);
 
         context = MainActivity.this;
         PermissionUtils.getInstance().requestPermissions(context);
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "dexUnzipFile:" + dexUnzipFile.getPath());
     }
 
+    @SuppressLint("SetTextI18n")
     public void load1(View view) {
         /*
             参数:
@@ -56,8 +59,10 @@ public class MainActivity extends AppCompatActivity {
         ClassLoader classLoader = new BaseDexClassLoader(dexPath, dexUnzipFile, soPath, ClassLoader.getSystemClassLoader());
 //        ClassLoader classLoader = new DexClassLoader(dexPath, dexUnzipFile.getAbsolutePath(), soPath, context.getClassLoader());
         invokeCustomMethod(classLoader);
+        tv.setText("从dex文件中加载类");
     }
 
+    @SuppressLint("SetTextI18n")
     public void load2(View view) {
         File dexFile = new File(dir, "classes.dex");
         byte[] bytes = FileUtils.getInstance().readFile(dexFile);
@@ -69,14 +74,17 @@ public class MainActivity extends AppCompatActivity {
         //            classLoader = new InMemoryDexClassLoader(byteBuffers, null, context.getClassLoader());
         ClassLoader classLoader = new InMemoryDexClassLoader(byteBuffers, ClassLoader.getSystemClassLoader());
         invokeCustomMethod(classLoader);
+        tv.setText("从内存中加载类");
     }
 
+    @SuppressLint("SetTextI18n")
     public void load3(View view) {
         File apkFile = new File(dir, "makedex-debug.apk");
 
 //        ClassLoader classLoader = new BaseDexClassLoader(apkFile.getPath(), dexUnzipFile, soPath, ClassLoader.getSystemClassLoader());
         ClassLoader classLoader = new DexClassLoader(apkFile.getPath(), dexUnzipFile.getAbsolutePath(), soPath, ClassLoader.getSystemClassLoader());
         invokeCustomMethod(classLoader);
+        tv.setText("从apk文件中加载类");
     }
 
     public void invokeCustomMethod(ClassLoader classLoader) {

@@ -10,22 +10,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="load1"
-        android:text="BaseDexClassLoader" />
+        android:text="load Class from dex file" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="load2"
-        android:text="InMemoryDexClassLoader" />
+        android:text="load Class from dex in memory" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="load3"
-        android:text="load Class from apk" />
+        android:text="load Class from apk file" />
 
     <TextView
-        android:id="@+id/textBloardId"
+        android:id="@+id/textViewId"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:hint="默认信息"
