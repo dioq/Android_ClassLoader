@@ -1,6 +1,6 @@
-# Android 动态加载 .dex文件
+# Android 类加载器
 
-java 代码编译成 dex文件,并被Android 项目动态加载,然后执行 java方法
+android 中 java 代码编译并压缩后是dex文件,ClassLoader 可以加载 dex 中的类
 
 ## java 源码编译成 dex 文件
 
